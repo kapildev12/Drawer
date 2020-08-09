@@ -163,7 +163,7 @@ public class Notification extends FragmentActivity implements OnMapReadyCallback
 
         switch(v.getId())
         {
-            case R.id.B_search:
+            /*case R.id.B_search:
                 EditText tf_location = (EditText) findViewById(R.id.TF_location);
                 String location = tf_location.getText().toString();
                 List<Address> addressList;
@@ -193,7 +193,7 @@ public class Notification extends FragmentActivity implements OnMapReadyCallback
                         e.printStackTrace();
                     }
                 }
-                break;
+                break;*/
             case R.id.B_hopistals:
                 mMap.clear();
                 String hospital = "hospital";
@@ -227,7 +227,7 @@ public class Notification extends FragmentActivity implements OnMapReadyCallback
                 getNearbyPlacesData.execute(dataTransfer);
                 Toast.makeText(Notification.this, "Showing Nearby Bloodbanks", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.B_to:
+           // case R.id.B_to:
         }
     }
 

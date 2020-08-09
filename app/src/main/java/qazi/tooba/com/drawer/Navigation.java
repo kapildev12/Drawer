@@ -211,7 +211,7 @@ public class Navigation extends AppCompatActivity
                     Token token = postSnapShot.getValue(Token.class);
                     String json_lat_lng = new Gson().toJson(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
                     String riderToke = FirebaseInstanceId.getInstance().getToken();
-                    qazi.tooba.com.drawer.Model.Notification data = new qazi.tooba.com.drawer.Model.Notification(riderToke, json_lat_lng);
+                    qazi.tooba.com.drawer.Model.Notification data = new qazi.tooba.com.drawer.Model.Notification(riderToke, json_lat_lng, Common.currentRider.getName());
                     Sender content = new Sender(token.getToken(), data);
 
 
@@ -234,7 +234,7 @@ public class Navigation extends AppCompatActivity
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
