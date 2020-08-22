@@ -9,32 +9,20 @@ import android.widget.TextView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-import org.w3c.dom.Text;
-
 /**
  * Created by sickbay on 12/15/2017.
  */
 
 public class BottomSheetRiderFragment extends BottomSheetDialogFragment {
-    String mTag;
-    String mLocation, mdistance;
+    String name;
+    String number;
 
-    public static BottomSheetRiderFragment newInstance(String Location)
+    public static BottomSheetRiderFragment newInstance(String name, String number)
     {
         BottomSheetRiderFragment f = new BottomSheetRiderFragment();
-        Bundle args = new Bundle();
-        args.putString("Location",Location);
-       // args.putString("distance",Distance);
-        f.setArguments(args);
+        f.name = name;
+        f.number = number;
         return f;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mLocation = getArguments().getString("Location");
-      //  mdistance = getArguments().getString("distance");
-
     }
 
     @Nullable
@@ -42,11 +30,13 @@ public class BottomSheetRiderFragment extends BottomSheetDialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bottom_sheet_rider,container,false);
 
-        TextView txtlocation = (TextView)view.findViewById(R.id.txtlocation);
-        TextView txtdistance = (TextView)view.findViewById(R.id.txtdistance);
+        TextView tvName = view.findViewById(R.id.tvName);
+        TextView tvNumber= view.findViewById(R.id.tvNumber);
 
 
-        txtlocation.setText(mLocation);
+        tvName.setText(name);
+        tvNumber.setText(number);
+
         return view;
     }
 }

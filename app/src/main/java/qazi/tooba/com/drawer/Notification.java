@@ -149,6 +149,7 @@ public class Notification extends FragmentActivity implements OnMapReadyCallback
         googlePlaceUrl.append("&keyword=bloodbank");
         googlePlaceUrl.append("&type="+nearbyPlace);
         googlePlaceUrl.append("&sensor=true");
+        googlePlaceUrl.append("&fields=formatted_address,name,geometry");
         googlePlaceUrl.append("&key="+"AIzaSyD1uDBg-FhGJ3fZkOWr3Mdzdo77MLVMrpI");
 
         Log.d("MapsActivity", "url = "+googlePlaceUrl.toString());
@@ -240,6 +241,7 @@ public class Notification extends FragmentActivity implements OnMapReadyCallback
         googlePlaceUrl.append("&radius="+PROXIMITY_RADIUS);
         googlePlaceUrl.append("&type="+nearbyPlace);
         googlePlaceUrl.append("&sensor=true");
+        googlePlaceUrl.append("&fields=formatted_address,name,geometry");
         googlePlaceUrl.append("&key="+"AIzaSyD1uDBg-FhGJ3fZkOWr3Mdzdo77MLVMrpI");
 
         Log.d("MapsActivity", "url = "+googlePlaceUrl.toString());

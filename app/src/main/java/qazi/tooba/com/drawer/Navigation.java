@@ -1,7 +1,11 @@
 package qazi.tooba.com.drawer;
 
 import android.Manifest;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -84,7 +88,7 @@ public class Navigation extends AppCompatActivity
 
     //Location
     private static final int PLAY_SERVICE_RES_REQUEST = 300193;
-    private static final int LIMIT = 3;// 3 km
+    private static final int LIMIT = 70;// 3 km
     private static int UPDATE_INTERVAL = 5000;
     private static int FATEST_INTERVAL = 3000;
     private static int DISPLACEMENT = 10;
@@ -104,13 +108,29 @@ public class Navigation extends AppCompatActivity
     AutocompleteSupportFragment place_location, place_destination;
     String mPlaceLocation;
     private GoogleMap mMap;
-
-
     //presense system
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
     //AutocompleteFilter typefilter;
     private Location mLastLocation;
+    private ProgressDialog dialog;
+    BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            dialog.cancel();
+            if (intent.getAction() == null || intent.getAction().equals("No_Driver"))
+                return;
+            Intent intent1 = new Intent(Navigation.this, DriverActivity.class);
+            intent1.putExtra("name", intent.getStringExtra("name"));
+            intent1.putExtra("number", intent.getStringExtra("number"));
+            intent1.putExtra("lat", intent.getStringExtra("lat"));
+            intent1.putExtra("lng", intent.getStringExtra("lng"));
+            intent1.putExtra("driver", intent.getStringExtra("driver"));
+            startActivity(intent1);
+        }
+    };
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +139,7 @@ public class Navigation extends AppCompatActivity
         Places.initialize(this, getString(R.string.google_api_key));
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-       // mBottomSheet = new BottomSheetRiderFragment();
+        // mBottomSheet = new BottomSheetRiderFragment();
         mServices = Common.getFCMService();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -146,10 +166,7 @@ public class Navigation extends AppCompatActivity
         btnPickUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!isDriverFound)
-                    requestPickup(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                else
-                    sendRequestToDriver(driverId);
+                requestPickup(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
             }
         });
@@ -164,12 +181,12 @@ public class Navigation extends AppCompatActivity
             @Override
             public void onPlaceSelected(@NonNull Place place) {
                 mPlaceLocation = place.getAddress();
-
+                mLastLocation.setLatitude(place.getLatLng().latitude);
+                mLastLocation.setLongitude(place.getLatLng().longitude);
                 mMap.clear();
 
                 mUserMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng()).icon(BitmapDescriptorFactory.defaultMarker()).title("Pick up here"));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 15.0f));
-                mBottomSheet = BottomSheetRiderFragment.newInstance(mPlaceLocation);
 
             }
 
@@ -179,18 +196,24 @@ public class Navigation extends AppCompatActivity
             }
         });
 
-
-        imgExpandable.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mBottomSheet != null)
-                mBottomSheet.show(getSupportFragmentManager(), mBottomSheet.getTag());
-            }
-        });
-
         setUpLocation();
 
+
         updateFirebaseToken();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter("Driver");
+        filter.addAction("No_Driver");
+        registerReceiver(receiver, filter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(receiver);
     }
 
     private void updateFirebaseToken() {
@@ -218,16 +241,14 @@ public class Navigation extends AppCompatActivity
                     mServices.sendMessage(content).enqueue(new Callback<FCMResponse>() {
                         @Override
                         public void onResponse(@NonNull Call<FCMResponse> call, @NonNull Response<FCMResponse> response) {
-                            if (response.body().success == 1) {
-                                Toast.makeText(Navigation.this, "Request Sent", Toast.LENGTH_SHORT).show();
-                                btnPickUp.setEnabled(false);
-                            } else
-                                Toast.makeText(Navigation.this, "Failed", Toast.LENGTH_SHORT).show();
+                            if (response.body().success != 1) {
+                                Toast.makeText(Navigation.this, "Failed to lookup for Ambulance", Toast.LENGTH_SHORT).show();
+                            }
                         }
 
                         @Override
                         public void onFailure(Call<FCMResponse> call, Throwable t) {
-                            Log.e("Error", t.getMessage());
+                            Toast.makeText(Navigation.this, "Failed to lookup for Ambulance", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -235,13 +256,17 @@ public class Navigation extends AppCompatActivity
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                Toast.makeText(Navigation.this, "Failed to lookup for Ambulance", Toast.LENGTH_SHORT).show();
             }
         });
 
     }
 
     private void requestPickup(String uid) {
+        dialog = new ProgressDialog(this);
+        dialog.setMessage("Finding Ambulance");
+        dialog.setCancelable(false);
+        dialog.show();
         DatabaseReference dbRequest = FirebaseDatabase.getInstance().getReference(Common.pickup_request);
         GeoFire mGeoFire = new GeoFire(dbRequest);
         mGeoFire.setLocation(uid, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
@@ -253,8 +278,6 @@ public class Navigation extends AppCompatActivity
                 .snippet("").position(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude())).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
 
         mUserMarker.showInfoWindow();
-
-        btnPickUp.setText("Getting your Driver");
 
         findDriver();
 
@@ -273,8 +296,6 @@ public class Navigation extends AppCompatActivity
                 if (!isDriverFound) {
                     isDriverFound = true;
                     driverId = key;
-                    btnPickUp.setText("Call driver");
-                    Toast.makeText(Navigation.this, "" + key, Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -292,12 +313,16 @@ public class Navigation extends AppCompatActivity
             public void onGeoQueryReady() {
                 //if driver not found increase the distance
 
-                if (!isDriverFound && radius < LIMIT) {
-                    radius++;
-                    findDriver();
+                if (!isDriverFound) {
+                    if (radius < LIMIT) {
+                        radius++;
+                        findDriver();
+                    } else {
+                        dialog.dismiss();
+                        Toast.makeText(Navigation.this, "No Ambulance Found", Toast.LENGTH_LONG).show();
+                    }
                 } else {
-                    Toast.makeText(Navigation.this, "no Available Ambulance near you", Toast.LENGTH_SHORT).show();
-                    btnPickUp.setText("Request Pick");
+                    sendRequestToDriver(driverId);
                 }
             }
 
@@ -349,7 +374,13 @@ public class Navigation extends AppCompatActivity
             findViewById(R.id.ivMyLoc).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 15.0f));
+                    if (ActivityCompat.checkSelfPermission(Navigation.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(Navigation.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                    mLastLocation.setLongitude(location.getLongitude());
+                    mLastLocation.setLatitude(location.getLatitude());
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15.0f));
                 }
             });
             // create latlng
