@@ -77,6 +77,40 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
                 getApplicationContext().sendBroadcast(intent);
                 break;
             }
+
+            case "Started": {
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MyFirebaseMessaging.this,
+                                remoteMessage.getNotification().getBody(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                Intent intent = new Intent("Started");
+                getApplicationContext().sendBroadcast(intent);
+
+                break;
+            }
+
+            case "Ended": {
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MyFirebaseMessaging.this,
+                                remoteMessage.getNotification().getBody(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                Intent intent = new Intent("Ended");
+                getApplicationContext().sendBroadcast(intent);
+                break;
+            }
+
             case "Arrived":
                 showArrivedNotification(remoteMessage.getNotification().getBody());
                 break;

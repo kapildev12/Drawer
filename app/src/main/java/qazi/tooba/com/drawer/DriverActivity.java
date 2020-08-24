@@ -36,13 +36,19 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String lat = intent.getStringExtra("lat");
-            String lng = intent.getStringExtra("lng");
-            if (lat != null && lng != null) {
-                LatLng latLng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
-                checkMarker(latLng);
-                driverMarker.setPosition(latLng);
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17.0f));
+            if (intent.getAction() != null && intent.getAction().equals("Started"))
+                findViewById(R.id.btCancel).setVisibility(View.GONE);
+            else if (intent.getAction() != null && intent.getAction().equals("Ended"))
+                finish();
+            else {
+                String lat = intent.getStringExtra("lat");
+                String lng = intent.getStringExtra("lng");
+                if (lat != null && lng != null) {
+                    LatLng latLng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
+                    checkMarker(latLng);
+                    driverMarker.setPosition(latLng);
+                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17.0f));
+                }
             }
         }
     };
@@ -61,7 +67,10 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(receiver, new IntentFilter("Location"));
+        IntentFilter filter = new IntentFilter("Location");
+        filter.addAction("Started");
+        filter.addAction("Ended");
+        registerReceiver(receiver, filter);
     }
 
     @Override

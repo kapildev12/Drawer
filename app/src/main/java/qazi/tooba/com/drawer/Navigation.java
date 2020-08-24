@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -117,6 +118,7 @@ public class Navigation extends AppCompatActivity
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            timer.cancel();
             dialog.cancel();
             if (intent.getAction() == null || intent.getAction().equals("No_Driver"))
                 return;
@@ -129,7 +131,6 @@ public class Navigation extends AppCompatActivity
             startActivity(intent1);
         }
     };
-
 
 
     @Override
@@ -225,6 +226,8 @@ public class Navigation extends AppCompatActivity
         tokens.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(token);
     }
 
+    private CountDownTimer timer;
+
     private void sendRequestToDriver(String driverId) {
         DatabaseReference tokens = FirebaseDatabase.getInstance().getReference(Common.token_tbl);
         tokens.orderByKey().equalTo(driverId).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -241,8 +244,22 @@ public class Navigation extends AppCompatActivity
                     mServices.sendMessage(content).enqueue(new Callback<FCMResponse>() {
                         @Override
                         public void onResponse(@NonNull Call<FCMResponse> call, @NonNull Response<FCMResponse> response) {
-                            if (response.body().success != 1) {
+                            if (response.body() != null && response.body().success != 1) {
                                 Toast.makeText(Navigation.this, "Failed to lookup for Ambulance", Toast.LENGTH_SHORT).show();
+                            } else {
+                                timer = new CountDownTimer(60000, 1000) {
+                                    @Override
+                                    public void onTick(long l) {
+
+                                    }
+
+                                    @Override
+                                    public void onFinish() {
+                                        dialog.cancel();
+                                        Toast.makeText(Navigation.this, "Failed to lookup for Ambulance", Toast.LENGTH_SHORT).show();
+                                    }
+                                };
+                                timer.start();
                             }
                         }
 
@@ -380,6 +397,7 @@ public class Navigation extends AppCompatActivity
                     Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                     mLastLocation.setLongitude(location.getLongitude());
                     mLastLocation.setLatitude(location.getLatitude());
+                    mUserMarker.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15.0f));
                 }
             });
