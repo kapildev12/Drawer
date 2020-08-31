@@ -1,5 +1,8 @@
 package qazi.tooba.com.drawer.Common;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import qazi.tooba.com.drawer.Model.Rider;
 import qazi.tooba.com.drawer.Remote.FCMClient;
 import qazi.tooba.com.drawer.Remote.IFCMService;
@@ -24,6 +27,13 @@ public class Common {
     public static IFCMService getFCMService()
     {
         return FCMClient.getClient(fcmURL).create(IFCMService.class);
+    }
+
+    public static boolean isEmailValid(String email) {
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
 }

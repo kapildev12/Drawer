@@ -80,19 +80,25 @@ public class Login extends AppCompatActivity {
                                 {
                                     @Override
                                     public void onClick(View view) {
-                                        final ProgressDialog mDialog = new ProgressDialog(Login.this);
-                                        mDialog.setMessage("signing in....");
-                                        mDialog.show();
-                                        if(TextUtils.isEmpty(nEmail.toString()))
+                                        if(TextUtils.isEmpty(nEmail.getText().toString().trim()))
                                         {
                                             Toast.makeText(Login.this, "Enter Email", Toast.LENGTH_SHORT).show();
                                             return;
                                         }
-                                        if(TextUtils.isEmpty(nPassword.toString()))
+                                        if(TextUtils.isEmpty(nPassword.getText().toString().trim()))
                                         {
                                             Toast.makeText(Login.this, "Enter password", Toast.LENGTH_SHORT).show();
                                             return;
                                         }
+
+                                        if (!Common.isEmailValid(nEmail.getText().toString())) {
+                                            Toast.makeText(Login.this, "Invalid E-mail Format", Toast.LENGTH_SHORT).show();
+                                            return;
+                                        }
+
+                                        final ProgressDialog mDialog = new ProgressDialog(Login.this);
+                                        mDialog.setMessage("signing in....");
+                                        mDialog.show();
 
                                         auth.signInWithEmailAndPassword(nEmail.getText().toString(),nPassword.getText().toString()).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                                             @Override

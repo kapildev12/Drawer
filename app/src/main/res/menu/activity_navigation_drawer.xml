@@ -17,14 +17,6 @@
             android:title="Search by Injury" />
 
         <item
-            android:id="@+id/nav_nearBy"
-            android:icon="@drawable/ic_near_me_black_24dp"
-            android:title="Nearby places" />
-        <item
-            android:id="@+id/nav_blood"
-            android:icon="@drawable/ic_file_blood_drop_plain"
-            android:title="Blood group network" />
-        <item
             android:id="@+id/nav_MLO"
             android:icon="@drawable/ic_assignment_black_24dp"
             android:title="MLO Form" />
@@ -36,11 +28,6 @@
             android:id="@+id/nav_Services"
             android:icon="@drawable/ic_local_hospital_black_24dp"
             android:title="Services" />
-
-        <item
-            android:id="@+id/nav_Rating"
-            android:icon="@drawable/ic_comment_black_24dp"
-            android:title="Rating" />
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_ss"

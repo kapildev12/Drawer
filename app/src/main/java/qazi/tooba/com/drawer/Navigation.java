@@ -115,6 +115,7 @@ public class Navigation extends AppCompatActivity
     //AutocompleteFilter typefilter;
     private Location mLastLocation;
     private ProgressDialog dialog;
+    private CountDownTimer timer;
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -131,7 +132,6 @@ public class Navigation extends AppCompatActivity
             startActivity(intent1);
         }
     };
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -225,8 +225,6 @@ public class Navigation extends AppCompatActivity
         Token token = new Token(FirebaseInstanceId.getInstance().getToken());
         tokens.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(token);
     }
-
-    private CountDownTimer timer;
 
     private void sendRequestToDriver(String driverId) {
         DatabaseReference tokens = FirebaseDatabase.getInstance().getReference(Common.token_tbl);
@@ -589,29 +587,13 @@ public class Navigation extends AppCompatActivity
             Intent intent = new Intent(this, Profile.class);
 
             startActivity(intent);
-
         } else if (id == R.id.nav_First_aids) {
 
             Intent intent = new Intent(this, Firstaids.class);
 
             startActivity(intent);
-        } else if (id == R.id.nav_nearBy) {
-
-            Intent intent = new Intent(this, Notification.class);
-
-            startActivity(intent);
-        } else if (id == R.id.nav_Rating) {
-
-            Intent intent = new Intent(this, Rating.class);
-
-            startActivity(intent);
         } else if (id == R.id.nav_Searchbyinjury) {
             Intent intent = new Intent(this, InjuryType.class);
-
-            startActivity(intent);
-
-        } else if (id == R.id.nav_blood) {
-            Intent intent = new Intent(this, bloodGroup.class);
 
             startActivity(intent);
 
