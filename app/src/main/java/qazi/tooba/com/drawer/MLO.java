@@ -1,14 +1,19 @@
 package qazi.tooba.com.drawer;
 
-import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.Toast;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.Properties;
 
-import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -17,32 +22,6 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
-import android.Manifest;
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
-import android.app.Activity;
-import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.MediaStore;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 
 public class MLO extends AppCompatActivity implements OnClickListener {
@@ -54,7 +33,6 @@ public class MLO extends AppCompatActivity implements OnClickListener {
     String rec, subject, textMessage;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,10 +40,10 @@ public class MLO extends AppCompatActivity implements OnClickListener {
 
         context = this;
 
-        Button login = (Button) findViewById(R.id.btn_submit);
-        reciep = (EditText) findViewById(R.id.et_to);
-        sub = (EditText) findViewById(R.id.et_sub);
-        msg = (EditText) findViewById(R.id.et_text);
+        Button login = findViewById(R.id.btn_submit);
+        reciep = findViewById(R.id.et_to);
+        sub = findViewById(R.id.et_sub);
+        msg = findViewById(R.id.et_text);
 
         login.setOnClickListener(this);
 
@@ -86,7 +64,7 @@ public class MLO extends AppCompatActivity implements OnClickListener {
 
         session = Session.getDefaultInstance(props, new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("k142839@nu.edu.pk", "Capcom30055#$");
+                return new PasswordAuthentication("ambulancesurveillance@gmail.com", "kapildev777");
             }
         });
 
@@ -101,16 +79,16 @@ public class MLO extends AppCompatActivity implements OnClickListener {
         @Override
         protected String doInBackground(String... params) {
 
-            try{
+            try {
                 Message message = new MimeMessage(session);
-                message.setFrom(new InternetAddress("k142839@nu.edu.pk"));
+                message.setFrom(new InternetAddress("ambulancesurveillance@gmail.com"));
                 message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(rec));
                 message.setSubject(subject);
                 message.setContent(textMessage, "text/html; charset=utf-8");
                 Transport.send(message);
-            } catch(MessagingException e) {
+            } catch (MessagingException e) {
                 e.printStackTrace();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;
@@ -125,8 +103,6 @@ public class MLO extends AppCompatActivity implements OnClickListener {
             Toast.makeText(getApplicationContext(), "Message sent", Toast.LENGTH_LONG).show();
         }
     }
-
-
 }
 
 

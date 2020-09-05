@@ -592,11 +592,11 @@ public class Navigation extends AppCompatActivity
             Intent intent = new Intent(this, Firstaids.class);
 
             startActivity(intent);
-        } else if (id == R.id.nav_Searchbyinjury) {
-            Intent intent = new Intent(this, InjuryType.class);
+        } else if (id == R.id.nav_nearBy) {
+
+            Intent intent = new Intent(this, Notification.class);
 
             startActivity(intent);
-
         } else if (id == R.id.nav_ContactUs) {
             Intent intent = new Intent(this, Contactus.class);
 
@@ -620,7 +620,7 @@ public class Navigation extends AppCompatActivity
             FirebaseAuth.getInstance().signOut();
 
             Intent intent = new Intent(this, MainActivity.class);
-
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
 

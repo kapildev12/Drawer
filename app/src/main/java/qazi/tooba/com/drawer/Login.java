@@ -103,7 +103,6 @@ public class Login extends AppCompatActivity {
                                         auth.signInWithEmailAndPassword(nEmail.getText().toString(),nPassword.getText().toString()).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                                             @Override
                                             public void onSuccess(AuthResult authResult) {
-                                                mDialog.dismiss();
 
                                                 FirebaseDatabase.getInstance().getReference(Common.user_rider).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                                                     @Override
@@ -111,7 +110,7 @@ public class Login extends AppCompatActivity {
 
                                                         Paper.book().write(Common.User_Field,nEmail.getText().toString());
                                                         Paper.book().write(Common.Pwd_Field,nPassword.getText().toString());
-
+                                                        mDialog.dismiss();
                                                         Common.currentRider = dataSnapshot.getValue(Rider.class);
                                                         startActivity( new Intent(Login.this,Navigation.class));
                                                         finish();
@@ -119,7 +118,7 @@ public class Login extends AppCompatActivity {
 
                                                     @Override
                                                     public void onCancelled(DatabaseError databaseError) {
-
+                                                        mDialog.dismiss();
                                                     }
                                                 });
 
@@ -143,11 +142,11 @@ public class Login extends AppCompatActivity {
         auth.signInWithEmailAndPassword(user_field,pas_field).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
             public void onSuccess(AuthResult authResult) {
-                mDialog.dismiss();
 
                 FirebaseDatabase.getInstance().getReference(Common.user_rider).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+                        mDialog.dismiss();
                         Common.currentRider = dataSnapshot.getValue(Rider.class);
                         startActivity( new Intent(Login.this,Navigation.class));
                         finish();
@@ -155,7 +154,7 @@ public class Login extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
+                        mDialog.dismiss();
                     }
                 });
 

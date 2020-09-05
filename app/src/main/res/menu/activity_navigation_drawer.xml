@@ -11,10 +11,11 @@
             android:id="@+id/nav_First_aids"
             android:icon="@drawable/ic_work_black_24dp"
             android:title="First Aids" />
+
         <item
-            android:id="@+id/nav_Searchbyinjury"
-            android:icon="@drawable/ic_touch_app_black_24dp"
-            android:title="Search by Injury" />
+            android:id="@+id/nav_nearBy"
+            android:icon="@drawable/ic_near_me_black_24dp"
+            android:title="Nearby places" />
 
         <item
             android:id="@+id/nav_MLO"

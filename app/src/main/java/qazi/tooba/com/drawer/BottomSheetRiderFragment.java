@@ -38,7 +38,7 @@ public class BottomSheetRiderFragment extends BottomSheetDialogFragment {
         tvNumber.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String number = ("tel:" + tvNumber);
+                String number = ("tel:" + tvNumber.getText().toString());
                 Intent mIntent = new Intent(Intent.ACTION_DIAL);
                 mIntent.setData(Uri.parse(number));
                 startActivity(mIntent);

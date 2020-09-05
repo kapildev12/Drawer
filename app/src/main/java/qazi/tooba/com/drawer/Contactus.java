@@ -2,6 +2,8 @@ package qazi.tooba.com.drawer;
 
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,8 +25,10 @@ public class Contactus extends AppCompatActivity {
             @Override
 
             public void onClick(View view) {
-                Intent intent = new Intent(Contactus.this, Contactthroughmail.class);
-                startActivity(intent);
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.putExtra(Intent.EXTRA_EMAIL, new String[] {"ambulancesurveillance@gmail.com"});
+                intent.setData(Uri.parse("mailto:"));
+                startActivity(Intent.createChooser(intent, "Select an app to email"));
             }
         });
     }
